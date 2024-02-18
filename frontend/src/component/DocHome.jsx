@@ -1,6 +1,6 @@
 import React, { Component, useState } from 'react';
 import im from '../assest/136920.jpg'
-import Logo from './Logo.jsx'
+import Logo from './Logo'
 import {
     Box,
     Button,
@@ -75,6 +75,7 @@ const SidebarButtons = () => {
 
 export class DocHome extends Component {
     componentDidMount() {
+        
     }
 
     render() {
@@ -134,8 +135,8 @@ export class DocHome extends Component {
                     </Grid>
                 </Box>
             </Grommet>
-            </div>
-            </div>
+        </div>
+        </div>
         );
     }
 }

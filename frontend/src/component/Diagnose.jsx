@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import im from '../assest/136920.jpg'
-import Logo from './Logo'
+import React, { useState } from 'react';
+import im from '../assest/136920.jpg';
+import Logo from './Logo';
 import {
   Box,
   Button,
@@ -9,6 +9,8 @@ import {
   Grommet
 } from 'grommet';
 import '../App.css';
+import { useParams } from 'react-router-dom';
+
 const theme = {
   global: {
     colors: {
@@ -21,9 +23,7 @@ const theme = {
     },
   },
 };
-var diagnosis;
-var prescription;
-var id;
+
 const AppBar = (props) => (
   <Box
     tag='header'
@@ -33,90 +33,85 @@ const AppBar = (props) => (
     background='brand'
     pad={{ left: 'medium', right: 'small', vertical: 'small' }}
     style={{ zIndex: '1'}}
-    {...props} />
+    {...props}
+  />
 );
 
-const DiagnosisTextArea = () => {
-  const [value, setValue] = React.useState("");
+const DiagnosisTextArea = ({ onChange }) => (
+  <Grommet theme={theme}>
+    <h4>Diagnosis</h4>
+    <TextArea
+      style={{ width: "50vw", height: "12vw", backgroundColor: "#FFFFFF", color: "#000000", opacity: 0.5 }}
+      placeholder="Enter Diagnosis"
+      label="Enter Diagnosis"
+      onChange={onChange}
+      fill
+      required
+    />
+  </Grommet>
+);
 
-  const onChange = event => {
-    setValue(event.target.value);
-    diagnosis = event.target.value;
+const PrescriptionTextArea = ({ onChange }) => (
+  <Grommet theme={theme}>
+    <h4>Prescription</h4>
+    <TextArea
+      placeholder="Enter Prescription"
+      label="Enter Prescription"
+      onChange={onChange}
+      style={{ width: "50vw", height: "12vw", backgroundColor: "#FFFFFF", color: "#000000", opacity: 0.5 }}
+      fill
+      required
+    />
+  </Grommet>
+);
+
+const Diagnose = () => {
+  const { id } = useParams();
+  const [diagnosis, setDiagnosis] = useState('');
+  const [prescription, setPrescription] = useState('');
+
+  const handleDiagnosisChange = (event) => {
+    setDiagnosis(event.target.value);
+  };
+
+  const handlePrescriptionChange = (event) => {
+    setPrescription(event.target.value);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    fetch(`http://localhost:3001/diagnose?diagnosis=${diagnosis}&prescription=${prescription}&id=${id}`)
+      .then(() => {
+        window.alert("Diagnosis Submitted!");
+      });
   };
 
   return (
-    <Grommet theme={theme}>
-      <h4>Diagnosis</h4>
-      <TextArea
-         style={{width:"50vw", height:"12vw",backgroundColor:"#FFFFFF", color:"#000000",opacity:0.5}}
-        placeholder="Enter Diagnosis"
-        label="Enter Diagnosis"
-        value={value}
-        onChange={onChange} fill
-        required />
-    </Grommet>
-  );
-};
-
-const PrescriptionTextArea = () => {
-  const [value, setValue] = React.useState("");
-  const onChange = event => {
-    setValue(event.target.value);
-    prescription = event.target.value;
-  };
-  return (
-    <Grommet theme={theme}>
-        <h4>Prescription</h4>
-        <TextArea
-          placeholder="Enter Prescription"
-          label="Enter Prescription"
-          value={value}
-          style={{width:"50vw", height:"12vw",backgroundColor:"#FFFFFF", color:"#000000",opacity:0.5}}
-          onChange={onChange} fill
-          required />
-    </Grommet>
-  );
-};
-
-export class Diagnose extends Component {
-  constructor(props) {
-    super(props);
-    id = props.match.params.id;
-  }
-  render() {
-    return (
-      <div className ='main'>
-       <img src={im} alt="image_alternauhsddv"></img>
+    <div className='main'>
+      <img src={im} alt="image_alternauhsddv"></img>
       <div className="content">
-      <Grommet theme={theme} full>
-        <AppBar>
-        <a style={{ color: 'inherit', textDecoration: 'inherit'}} href="/"><Logo></Logo></a>
-        </AppBar>
-        <Box align="center" gap="small">
-          <Form
-            onSubmit={({ value }) => {
-              fetch("http://localhost:3001/diagnose?diagnosis=" + diagnosis + "&prescription=" + prescription
-              + "&id=" + id).then(()=>{
-              })
-              window.alert("Diagnosis Submitted!");
-            }}
-          >
-            <DiagnosisTextArea />
-            <PrescriptionTextArea />
-            <br />
-            <Box align="center">
-            <Button
-              label="Submit Diagnosis"
-              type="submit"
-              primary
-            />
-            </Box>
-          </Form>
-        </Box>
-      </Grommet>
+        <Grommet theme={theme} full>
+          <AppBar>
+            <a style={{ color: 'inherit', textDecoration: 'inherit'}} href="/"><Logo></Logo></a>
+          </AppBar>
+          <Box align="center" gap="small">
+            <Form onSubmit={handleSubmit}>
+              <DiagnosisTextArea onChange={handleDiagnosisChange} />
+              <PrescriptionTextArea onChange={handlePrescriptionChange} />
+              <br />
+              <Box align="center">
+                <Button
+                  label="Submit Diagnosis"
+                  type="submit"
+                  primary
+                />
+              </Box>
+            </Form>
+          </Box>
+        </Grommet>
       </div>
-      </div>
-    );
-  }
+    </div>
+  );
 }
+
 export default Diagnose;

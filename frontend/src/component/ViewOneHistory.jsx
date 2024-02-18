@@ -1,6 +1,7 @@
-import React, { Component} from 'react';
-import im from '../assest/136920.jpg'
-import Logo from './Logo'
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import im from '../assest/136920.jpg';
+import Logo from './Logo';
 import {
     Box,
     Grommet,
@@ -24,118 +25,121 @@ const theme = {
     },
 };
 
-export class ViewOneHistory extends Component {
-    state = { medhiststate: [], medhiststate2: []}
-    componentDidMount() {
-        const { email } = this.props.match.params;
-        this.allDiagnoses(email);
-        this.getHistory(email);
-    }
+function ViewOneHistory() {
+    const { email } = useParams();
+    const [medhiststate, setMedhiststate] = useState([]);
+    const [medhiststate2, setMedhiststate2] = useState([]);
 
-    getHistory(value) {
+    useEffect(() => {
+        getHistory(email);
+        allDiagnoses(email);
+    }, [email]);
+
+    const getHistory = (value) => {
         let email = "'" + value + "'";
-        fetch('http://localhost:3001/OneHistory?patientEmail='+ email)
-        .then(res => res.json())
-            .then(res => this.setState({ medhiststate: res.data }));
-    }
+        fetch('http://localhost:3001/OneHistory?patientEmail=' + email)
+            .then((res) => res.json())
+            .then((res) => setMedhiststate(res.data))
+            .catch((error) => console.error('Error fetching history:', error));
+    };
 
-    allDiagnoses(value) {
+    const allDiagnoses = (value) => {
         let email = "'" + value + "'";
-        fetch('http://localhost:3001/allDiagnoses?patientEmail='+ email)
-        .then(res => res.json())
-        .then(res => this.setState({ medhiststate2: res.data }));
-    }
+        fetch('http://localhost:3001/allDiagnoses?patientEmail=' + email)
+            .then((res) => res.json())
+            .then((res) => setMedhiststate2(res.data))
+            .catch((error) => console.error('Error fetching diagnoses:', error));
+    };
 
-    render() {
-        const { medhiststate } = this.state;
-        const { medhiststate2 } = this.state;
-        const Header = () => (
-            <Box
-                tag='header'
-                background='brand'
-                pad='small'
-                elevation='small'
-                justify='between'
-                direction='row'
-                align='center'
-                flex={false}
-            >
-                <a style={{ color: 'inherit', textDecoration: 'inherit'}} href="/"><Logo></Logo></a>
-            </Box>
-        );
-        const Body = () => (
-            <div className="container">
-                <div className="panel panel-default p50 uth-panel">
-                    {medhiststate.map(patient =>
-                        <Table>
-                            <TableBody>
-                                <TableRow>
-                                    <TableCell scope="row">
-                                        <strong>Name</strong>
-                                    </TableCell>
-                                    <TableCell>{patient.name}</TableCell>
-                                    <TableCell></TableCell>
-                                    <TableCell><strong>Email</strong></TableCell>
-                                    <TableCell>{patient.email}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell scope="row">
-                                        <strong>Gender</strong>
-                                    </TableCell>
-                                    <TableCell>
-                                        {patient.gender}
-                                    </TableCell>
-                                    <TableCell />
-                                    <TableCell>
-                                        <strong>Address</strong>
-                                    </TableCell>
-                                    <TableCell>{patient.address}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell scope="row">
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell>
-                                        <strong>Conditions</strong>
-                                    </TableCell>
-                                    <TableCell>{patient.conditions}
-                                        </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell scope="row">
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell>
-                                        <strong>Surgeries</strong>
-                                    </TableCell>
-                                    <TableCell>{patient.surgeries}
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell scope="row">
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell>
-                                        <strong>Medications</strong>
-                                    </TableCell>
-                                    <TableCell>{patient.medication}
-                                    </TableCell>
-                                </TableRow>
-                            </TableBody>
-                        </Table>
-                    )}
-                </div>
-                <hr />
+    const Header = () => (
+        <Box
+            tag='header'
+            background='brand'
+            pad='small'
+            elevation='small'
+            justify='between'
+            direction='row'
+            align='center'
+            flex={false}
+        >
+            <a style={{ color: 'inherit', textDecoration: 'inherit'}} href="/"><Logo></Logo></a>
+        </Box>
+    );
+
+    const Body = () => (
+        <div className="container">
+            <div className="panel panel-default p50 uth-panel">
+                {medhiststate.map(patient =>
+                    <Table>
+                        <TableBody>
+                            <TableRow>
+                                <TableCell scope="row">
+                                    <strong>Name</strong>
+                                </TableCell>
+                                <TableCell>{patient.name}</TableCell>
+                                <TableCell></TableCell>
+                                <TableCell><strong>Email</strong></TableCell>
+                                <TableCell>{patient.email}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell scope="row">
+                                    <strong>Gender</strong>
+                                </TableCell>
+                                <TableCell>
+                                    {patient.gender}
+                                </TableCell>
+                                <TableCell />
+                                <TableCell>
+                                    <strong>Address</strong>
+                                </TableCell>
+                                <TableCell>{patient.address}</TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell scope="row">
+                                </TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>
+                                    <strong>Conditions</strong>
+                                </TableCell>
+                                <TableCell>{patient.conditions}
+                                </TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell scope="row">
+                                </TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>
+                                    <strong>Surgeries</strong>
+                                </TableCell>
+                                <TableCell>{patient.surgeries}
+                                </TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell scope="row">
+                                </TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>
+                                    <strong>Medications</strong>
+                                </TableCell>
+                                <TableCell>{patient.medication}
+                                </TableCell>
+                            </TableRow>
+                        </TableBody>
+                    </Table>
+                )}
             </div>
-        );
-        const Body2 = () => (
-            <div className="container">
-                <div className="panel panel-default p50 uth-panel">
-                    {medhiststate2.map(patient =>
-                        <div>
+            <hr />
+        </div>
+    );
+
+    const Body2 = () => (
+        <div className="container">
+            <div className="panel panel-default p50 uth-panel">
+                {medhiststate2.map(patient =>
+                    <div>
                         <Table>
                             <TableBody>
                                 <TableRow>
@@ -145,7 +149,7 @@ export class ViewOneHistory extends Component {
                                     <TableCell>{patient.date.split('T')[0]}</TableCell>
                                     <TableCell></TableCell>
                                     <TableCell><strong>Doctor</strong></TableCell>
-                                    <TableCell>{patient.doctor}</TableCell>
+                                    <TableCell>{patient.email}</TableCell>
                                 </TableRow>
                                 <TableRow>
                                     <TableCell scope="row">
@@ -169,7 +173,7 @@ export class ViewOneHistory extends Component {
                                         <strong>Diagnosis</strong>
                                     </TableCell>
                                     <TableCell>{patient.diagnosis}
-                                        </TableCell>
+                                    </TableCell>
                                 </TableRow>
                                 <TableRow>
                                     <TableCell scope="row">
@@ -189,25 +193,26 @@ export class ViewOneHistory extends Component {
                             </TableBody>
                         </Table>
                         <hr />
-                        </div>
-                    )}
-                </div>
+                    </div>
+                )}
             </div>
-        );
-        return (
-            <div className ='main'>
-    <img src={im} alt='imagejhbfjbskdbsvljsb'></img>
-    <div className="content">
-            <Grommet full={true} theme={theme}>
-                <Box fill={true}>
-                    <Header />
-                    <Body />
-                    <Body2 />
-                </Box>
-            </Grommet>
+        </div>
+    );
+
+    return (
+        <div className='main'>
+            <img src={im} alt='imagejhbfjbskdbsvljsb'></img>
+            <div className="content">
+                <Grommet full={true} theme={theme}>
+                    <Box fill={true}>
+                        <Header />
+                        <Body />
+                        <Body2 />
+                    </Box>
+                </Grommet>
             </div>
-            </div>
-        );
-    }
+        </div>
+    );
 }
+
 export default ViewOneHistory;

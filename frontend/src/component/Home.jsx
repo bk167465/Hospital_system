@@ -83,6 +83,7 @@ const SidebarButtons = () => {
     </Grommet>
   );
 };
+
 export class Home extends Component {
   renderName = ({ name, email }) => <div key={email}>{name} {name}</div>
 
@@ -146,7 +147,7 @@ export class Home extends Component {
         </Box>
       </Grommet>
       </div>
-            </div>
+    </div>
     );
   }
 }

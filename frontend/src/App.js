@@ -1,5 +1,5 @@
-import React,{useEffect, useState} from "react";
-import {BrowserRouter as Router,Switch,Route} from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from './component/Home.jsx';
 import LogIn from './component/logIn.jsx';
 import CreateAccount from './component/CreateAccount.jsx';
@@ -15,74 +15,47 @@ import DocViewAppt from './component/DocViewAppt.jsx';
 import MakeDoc from './component/MakeDoc.jsx';
 import Diagnose from './component/Diagnose.jsx';
 import ShowDiagnoses from './component/ShowDiagnoses.jsx';
+
 export default function App() {
-  let [component, setComponent] = useState(<LogIn />)
-  useEffect(()=>{
+  const [userSession, setUserSession] = useState(null);
+
+  useEffect(() => {
     fetch("http://localhost:3001/userInSession")
       .then(res => res.json())
       .then(res => {
-      let string_json = JSON.stringify(res);
-      let email_json = JSON.parse(string_json);
-      let email = email_json.email;
-      let who = email_json.who;
-      if(email === ""){
-        setComponent(<LogIn />)
-      }
-      else{
-        if(who==="pat"){
-          setComponent(<Home />)
-        }
-        else{
-          setComponent(<DocHome />)
-        }
-      }
-    });
-  }, [])
+        setUserSession(res);
+      })
+      .catch(error => {
+        console.error("Error fetching user session:", error);
+      });
+  }, []);
+
+  if (!userSession) {
+    // If user session data is not yet available, display a loading message or spinner
+    return <div>Loading...</div>;
+  }
+
   return (
     <Router>
       <div>
-        
-        <Switch>
-          <Route path="/NoMedHistFound">
-            <NoMedHistFound />
-          </Route>
-          <Route path="/MakeDoc">
-            <MakeDoc />
-          </Route>
-          <Route path="/Settings">
-            <Settings />
-          </Route>
-          <Route path="/MedHistView">
-            <ViewMedHist />
-          </Route>
-          <Route path="/scheduleAppt">
-            <SchedulingAppt />
-          </Route>
-          <Route path="/showDiagnoses/:id" render={props=><ShowDiagnoses {...props} />} />
-          <Route path="/Diagnose/:id" render={props=><Diagnose {...props} />} />
-          <Route name="onehist" path="/ViewOneHistory/:email" render={props=><ViewOneHistory {...props} />}/>
-          <Route path="/Home">
-              <Home />
-          </Route>
-          <Route path="/createAcc">
-            <CreateAccount />
-          </Route>
-          <Route path="/DocHome">
-            <DocHome />
-          </Route>
-          <Route path="/PatientsViewAppt">
-              <PatientsViewAppt />
-          </Route>
-          <Route path="/DocSettings">
-            <DocSettings />
-          </Route>
-          <Route path="/ApptList">
-            <DocViewAppt />
-          </Route>
-          <Route path="/">
-            {component}
-          </Route>
-        </Switch>
+        <Routes>
+          <Route path="/" element={<LogIn />} />
+          <Route path="/ApptList" element={<DocViewAppt/>} />
+          <Route path="/createAcc" element={<CreateAccount />} />
+          <Route path="/Diagnose/:id" element={<Diagnose />} />
+          <Route path="/DocHome" element={<DocHome />} />
+          <Route path="/DocSettings" element={<DocSettings/>} />
+          <Route path="/Home" element={<Home />} />
+          <Route path="/login" element={<LogIn />} />
+          <Route path="/MakeDoc" element={<MakeDoc />} />
+          <Route path="/MedHistView" element={<ViewMedHist />} />
+          <Route path="/NoMedHistFound" element={<NoMedHistFound />} />
+          <Route path="/PatientsViewAppt" element={<PatientsViewAppt/>} />
+          <Route path="/scheduleAppt" element={<SchedulingAppt />} />
+          <Route path="/Settings" element={<Settings />} />
+          <Route path="/showDiagnoses/:id" element={<ShowDiagnoses />} />
+          <Route name="onehist" path="/ViewOneHistory/:email" element={<ViewOneHistory />} />
+        </Routes>
       </div>
     </Router>
   );
